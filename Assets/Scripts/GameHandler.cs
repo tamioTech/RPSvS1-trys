@@ -12,16 +12,23 @@ public class GameHandler : MonoBehaviour
     [SerializeField] GameObject p2a1, p2a2, p2a3, p2b1, p2b2, p2b3;
     [SerializeField] GameObject scoreboard;
     [SerializeField] private int score = 2;
+    [SerializeField] Slider scoreboardSlider;
+    [SerializeField] GameObject bombGao;
+    [SerializeField] ParticleSystem expP1;
+    [SerializeField] ParticleSystem expP2;
+    [SerializeField] SpriteRenderer p1SR;
+    [SerializeField] SpriteRenderer p2SR;
 
     private string P1a, P1b, P2a, P2b = null;
     private string[] rdmDraw = new string[] { "BoxingGlove", "Newspaper", "Sword" };
     private int gameStartScore = 3;
     bool slotAFilled, slotBFilled, battling, gameOn;
 
-    Slider scoreboardSlider;
     DJMickeyMouse dj;
     Bomb bomb;
     AudioSource bombAudioSource;
+    GameHandler gameHandler;
+
 
 
 
@@ -31,12 +38,15 @@ public class GameHandler : MonoBehaviour
         dj = FindObjectOfType<DJMickeyMouse>();
         bomb = FindObjectOfType<Bomb>();
         bombAudioSource = bomb.GetComponent<AudioSource>();
+        gameHandler = FindObjectOfType<GameHandler>();
         slotAFilled = false;
         slotBFilled = false;
         battling = false;
-        score = gameStartScore;
         gameOn = true;
-        
+        score = gameStartScore;
+        bombGao.SetActive(true);
+        p1SR.color = new Color(1, 1, 1, 1);
+        p2SR.color = new Color(1, 1, 1, 1);
     }
 
     private void Update()
@@ -108,20 +118,26 @@ public class GameHandler : MonoBehaviour
         {
             print("P2 WINS!!!");
             bomb.PlayExplosionSFX();
+            gameHandler.P1Explosion();
+            p1SR.color = new Color(1, 1, 1, .3f);
             dj.PlayVictoryMusic();
             gameOn = false;
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
+            bombGao.SetActive(false);
             return;
         }
         if (score >=6)
         {
             print("P1 WINS!!!");
             bomb.PlayExplosionSFX();
+            gameHandler.P2Explosion();
+            p2SR.color = new Color(1, 1, 1, .3f);
             dj.PlayVictoryMusic();
             gameOn = false;
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
+            bombGao.SetActive(false);
             return;
         }
         if(score == 1)
@@ -280,6 +296,16 @@ public class GameHandler : MonoBehaviour
     private void UpdateScoreBoard()
     {
         scoreboardSlider.value = score;
+    }
+
+    public void P1Explosion()
+    {
+        expP1.Play();
+    }
+
+    public void P2Explosion()
+    {
+        expP2.Play();
     }
 
 }
