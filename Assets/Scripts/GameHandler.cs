@@ -10,10 +10,9 @@ public class GameHandler : MonoBehaviour
 
     [SerializeField] Transform gloveHome, newspaperHome, swordHome;
     [SerializeField] GameObject p2a1, p2a2, p2a3, p2b1, p2b2, p2b3;
-    [SerializeField] GameObject scoreboard;
+    [SerializeField] GameObject scoreboard, bombGao, p1Crown, p2Crown;
     [SerializeField] private int score = 2;
     [SerializeField] Slider scoreboardSlider;
-    [SerializeField] GameObject bombGao;
     [SerializeField] ParticleSystem expP1;
     [SerializeField] ParticleSystem expP2;
     [SerializeField] SpriteRenderer p1SR;
@@ -47,6 +46,8 @@ public class GameHandler : MonoBehaviour
         bombGao.SetActive(true);
         p1SR.color = new Color(1, 1, 1, 1);
         p2SR.color = new Color(1, 1, 1, 1);
+        p1Crown.SetActive(false);
+        p2Crown.SetActive(false);
     }
 
     private void Update()
@@ -117,6 +118,7 @@ public class GameHandler : MonoBehaviour
         if (score <= 0)
         {
             print("P2 WINS!!!");
+            p2Crown.SetActive(true);
             bomb.PlayExplosionSFX();
             gameHandler.P1Explosion();
             p1SR.color = new Color(1, 1, 1, .3f);
@@ -130,6 +132,7 @@ public class GameHandler : MonoBehaviour
         if (score >=6)
         {
             print("P1 WINS!!!");
+            p1Crown.SetActive(true);
             bomb.PlayExplosionSFX();
             gameHandler.P2Explosion();
             p2SR.color = new Color(1, 1, 1, .3f);
