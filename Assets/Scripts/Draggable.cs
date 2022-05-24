@@ -5,6 +5,10 @@ using UnityEngine.EventSystems;
 
 public class Draggable : MonoBehaviour
 {
+    [SerializeField] float snapDistance;
+    [SerializeField] Transform _slot1;
+    [SerializeField] Transform _slot2;
+
     private bool _dragging;
 
     private Vector2 _offset, _originalPos;
@@ -32,7 +36,19 @@ public class Draggable : MonoBehaviour
     private void OnMouseUp()
     {
         _dragging = false;
+
+        if (Vector2.Distance(transform.position, _slot1.position) < snapDistance)
+        {
+            transform.position = _slot1.position;
+            return;
+        }
+        if (Vector2.Distance(transform.position, _slot2.position) < snapDistance)
+        {
+            transform.position = _slot2.position;
+            return;
+        }
         transform.position = _originalPos;
+
     }
 
     Vector2 GetMousePos()
