@@ -3,48 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Draggable : MonoBehaviour, IPointerDownHandler ,IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Draggable : MonoBehaviour
 {
-    [SerializeField] private Canvas canvas;
+    private bool _dragging;
 
-    private RectTransform rectTransform;
-    private CanvasGroup canvasGroup;
-
+    private Vector2 _offset, _originalPos;
 
     private void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
-        canvasGroup = GetComponent<CanvasGroup>();
+        _originalPos = transform.position;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    private void Update()
     {
-        //Debug.Log("clicked on something");
+        if (!_dragging) return;
+
+        var mousePosition = GetMousePos();
+
+        transform.position = mousePosition - _offset;
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    private void OnMouseDown()
     {
-        //Debug.Log("begin drag");
-        canvasGroup.alpha = .6f;
-        canvasGroup.blocksRaycasts = false;
+        _dragging = true;
+        _offset = GetMousePos() - (Vector2)transform.position;
     }
 
-    public void OnDrag(PointerEventData eventData)
+    private void OnMouseUp()
     {
-        //Debug.Log("dragging");
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
-
-       
+        _dragging = false;
+        transform.position = _originalPos;
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    Vector2 GetMousePos()
     {
-        //Debug.Log("stop dragging");
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
-
-    
-
-    
 }
