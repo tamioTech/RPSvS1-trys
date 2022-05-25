@@ -8,10 +8,20 @@ public class SlotDrop : MonoBehaviour, IDropHandler
     GameHandler gameHandler;
     SFXManager sfxManager;
 
+    Draggable draggable;
+    bool isDragging;
+
     private void Awake()
     {
         gameHandler = FindObjectOfType<GameHandler>();
         sfxManager = FindObjectOfType<SFXManager>();
+        draggable = FindObjectOfType<Draggable>();
+        isDragging = draggable.IsDragging();
+    }
+
+    private void Update()
+    {
+        isDragging = draggable.IsDragging();
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -26,6 +36,8 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isDragging) return;
+        print(isDragging);
         if(gameObject.tag == "P1a")
         {
             gameHandler.P1AChoice(collision.tag);

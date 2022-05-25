@@ -8,14 +8,24 @@ public class Draggable : MonoBehaviour
     [SerializeField] float snapDistance;
     [SerializeField] Transform _slot1;
     [SerializeField] Transform _slot2;
+    [SerializeField] BoxCollider2D slot1BoxCol;
+    [SerializeField] BoxCollider2D slot2BoxCol;
+
+
+    SpriteRenderer spriteRenderer;
 
     private bool _dragging;
+    public bool IsDragging()
+    {
+        print("am i draggin? " + _dragging);
+        return _dragging; }
 
     private Vector2 _offset, _originalPos;
 
     private void Awake()
     {
         _originalPos = transform.position;
+        spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -31,11 +41,17 @@ public class Draggable : MonoBehaviour
     {
         _dragging = true;
         _offset = GetMousePos() - (Vector2)transform.position;
+        spriteRenderer.sortingOrder = 5;
+        slot1BoxCol.enabled = false;
+        slot2BoxCol.enabled = false;
     }
 
     private void OnMouseUp()
     {
         _dragging = false;
+        spriteRenderer.sortingOrder = 4;
+        slot1BoxCol.enabled = true;
+        slot2BoxCol.enabled = true;
 
         if (Vector2.Distance(transform.position, _slot1.position) < snapDistance)
         {
@@ -48,7 +64,6 @@ public class Draggable : MonoBehaviour
             return;
         }
         transform.position = _originalPos;
-
     }
 
     Vector2 GetMousePos()
