@@ -4,19 +4,22 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameHandler : MonoBehaviour
 {
 
     [SerializeField] Transform gloveHome, newspaperHome, swordHome;
     [SerializeField] GameObject p2a1, p2a2, p2a3, p2b1, p2b2, p2b3, expP1gao, expP2gao;
-    [SerializeField] GameObject scoreboard, bombGao, p1Crown, p2Crown;
+    [SerializeField] GameObject scoreboard, bombGao, p1Crown, p2Crown, resetButton;
     [SerializeField] private int score = 2;
     [SerializeField] Slider scoreboardSlider;
     [SerializeField] ParticleSystem expP1;
     [SerializeField] ParticleSystem expP2;
     [SerializeField] SpriteRenderer p1SR;
     [SerializeField] SpriteRenderer p2SR;
+    [SerializeField] TextMeshProUGUI loseWinLabel;
+    
 
     private string P1a, P1b, P2a, P2b = null;
     private string[] rdmDraw = new string[] { "BoxingGlove", "Newspaper", "Sword" };
@@ -50,6 +53,8 @@ public class GameHandler : MonoBehaviour
         p2Crown.SetActive(false);
         expP1gao.SetActive(false);
         expP2gao.SetActive(false);
+        loseWinLabel.enabled = false;
+        resetButton.SetActive(false);
     }
 
     private void Update()
@@ -95,11 +100,9 @@ public class GameHandler : MonoBehaviour
     {
         float rdmNum1 = UnityEngine.Random.Range(0, 3);
         float rdmNum2 = UnityEngine.Random.Range(0, 3);
-        //float rdmNum3 = UnityEngine.Random.Range(0, 3);
 
         P2a = rdmDraw[Mathf.RoundToInt(rdmNum1)];
         P2b = rdmDraw[Mathf.RoundToInt(rdmNum2)];
-        //P2c = rdmDraw[Mathf.RoundToInt(rdmNum3)];
 
         if (rdmNum1 == 0){p2a1.SetActive(true);}
         if (rdmNum1 == 1) { p2a2.SetActive(true); }
@@ -108,18 +111,15 @@ public class GameHandler : MonoBehaviour
         if (rdmNum2 == 0) { p2b1.SetActive(true); }
         if (rdmNum2 == 1) { p2b2.SetActive(true); }
         if (rdmNum2 == 2) { p2b3.SetActive(true); }
-
-        //if (rdmNum3 == 0) { p2c1.SetActive(true); }
-        //if (rdmNum3 == 1) { p2c2.SetActive(true); }
-        //if (rdmNum3 == 2) { p2c3.SetActive(true); }
-
     }
 
     private void CheckScore()
     {
+        //lose
         if (score <= 0)
         {
-            print("P1 is a loser...");
+            loseWinLabel.enabled = true;
+            loseWinLabel.text = "You lose...";
             p2Crown.SetActive(true);
             bomb.PlayExplosionSFX();
             gameHandler.P1Explosion();
@@ -131,9 +131,11 @@ public class GameHandler : MonoBehaviour
             bombGao.SetActive(false);
             return;
         }
+        //win
         if (score >=6)
         {
-            print("P1 WINS!!!");
+            loseWinLabel.enabled = true;
+            loseWinLabel.text = "You win!";
             p1Crown.SetActive(true);
             bomb.PlayExplosionSFX();
             gameHandler.P2Explosion();
@@ -143,6 +145,7 @@ public class GameHandler : MonoBehaviour
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
             bombGao.SetActive(false);
+            resetButton.SetActive(true);
             return;
         }
         if(score == 1)
@@ -260,12 +263,17 @@ public class GameHandler : MonoBehaviour
         P1b = null;
         P2b = null;
 
+        if (!gameOn) return;
+
+
+
         p2a1.SetActive(false);
         p2a2.SetActive(false);
         p2a3.SetActive(false);
         p2b1.SetActive(false);
         p2b2.SetActive(false);
         p2b3.SetActive(false);
+
 
         #endregion
 
@@ -288,14 +296,55 @@ public class GameHandler : MonoBehaviour
         }
         #endregion
 
+        
+
     }
 
     public void ResetGame()
     {
-        gameOn = true;
         NextRound();
+        slotAFilled = false;
+        slotBFilled = false;
+        battling = false;
+        gameOn = true;
         score = gameStartScore;
+        bombGao.SetActive(true);
+        p1SR.color = new Color(1, 1, 1, 1);
+        p2SR.color = new Color(1, 1, 1, 1);
+        p1Crown.SetActive(false);
+        p2Crown.SetActive(false);
+        expP1gao.SetActive(false);
+        expP2gao.SetActive(false);
+        loseWinLabel.enabled = false;
+        resetButton.SetActive(false);
+        dj.PlayMusic();
         UpdateScoreBoard();
+
+        p2a1.SetActive(false);
+        p2a2.SetActive(false);
+        p2a3.SetActive(false);
+        p2b1.SetActive(false);
+        p2b2.SetActive(false);
+        p2b3.SetActive(false);
+
+        #region sendDraggablesHome
+
+        Glove[] gloves = FindObjectsOfType<Glove>();
+        for (int i = 0; i < gloves.Length; i++)
+        {
+            gloves[i].transform.position = gloveHome.position;
+        }
+        Newspaper[] newspapers = FindObjectsOfType<Newspaper>();
+        for (int i = 0; i < newspapers.Length; i++)
+        {
+            newspapers[i].transform.position = newspaperHome.position;
+        }
+        Sword[] swords = FindObjectsOfType<Sword>();
+        for (int i = 0; i < swords.Length; i++)
+        {
+            swords[i].transform.position = swordHome.position;
+        }
+        #endregion
     }
 
     private void UpdateScoreBoard()
