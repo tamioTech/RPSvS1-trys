@@ -9,7 +9,7 @@ public class GameHandler : MonoBehaviour
 {
 
     [SerializeField] Transform gloveHome, newspaperHome, swordHome;
-    [SerializeField] GameObject p2a1, p2a2, p2a3, p2b1, p2b2, p2b3;
+    [SerializeField] GameObject p2a1, p2a2, p2a3, p2b1, p2b2, p2b3, expP1gao, expP2gao;
     [SerializeField] GameObject scoreboard, bombGao, p1Crown, p2Crown;
     [SerializeField] private int score = 2;
     [SerializeField] Slider scoreboardSlider;
@@ -48,6 +48,8 @@ public class GameHandler : MonoBehaviour
         p2SR.color = new Color(1, 1, 1, 1);
         p1Crown.SetActive(false);
         p2Crown.SetActive(false);
+        expP1gao.SetActive(false);
+        expP2gao.SetActive(false);
     }
 
     private void Update()
@@ -117,12 +119,12 @@ public class GameHandler : MonoBehaviour
     {
         if (score <= 0)
         {
-            print("P2 WINS!!!");
+            print("P1 is a loser...");
             p2Crown.SetActive(true);
             bomb.PlayExplosionSFX();
             gameHandler.P1Explosion();
             p1SR.color = new Color(1, 1, 1, .3f);
-            dj.PlayVictoryMusic();
+            dj.PlayLoserMusic();
             gameOn = false;
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
@@ -303,11 +305,13 @@ public class GameHandler : MonoBehaviour
 
     public void P1Explosion()
     {
+        expP1gao.SetActive(true);
         expP1.Play();
     }
 
     public void P2Explosion()
     {
+        expP2gao.SetActive(true);
         expP2.Play();
     }
 

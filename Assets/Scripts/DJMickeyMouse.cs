@@ -7,6 +7,7 @@ public class DJMickeyMouse : MonoBehaviour
     [SerializeField] AudioClip music;
     [SerializeField] AudioClip panicMusic;
     [SerializeField] AudioClip victoryMusic;
+    [SerializeField] AudioClip loserMusic;
 
     DJMickeyMouse dj;
     AudioSource audioSource;
@@ -30,6 +31,7 @@ public class DJMickeyMouse : MonoBehaviour
         if (audioSource.clip == music) return;
         audioSource.Stop();
         audioSource.clip = music;
+        audioSource.loop = true;
         audioSource.Play();
     }
 
@@ -38,6 +40,7 @@ public class DJMickeyMouse : MonoBehaviour
         if (audioSource.clip == panicMusic) return;
         audioSource.Stop();
         audioSource.clip = panicMusic;
+        audioSource.loop = true;
         audioSource.Play();
     }
 
@@ -46,6 +49,16 @@ public class DJMickeyMouse : MonoBehaviour
         if (audioSource.clip == victoryMusic) return;
         audioSource.Stop();
         audioSource.clip = victoryMusic;
+        audioSource.loop = true;
+        audioSource.Play();
+    }
+
+    public void PlayLoserMusic()
+    {
+        if (audioSource.clip == loserMusic) return;
+        audioSource.Stop();
+        audioSource.clip = loserMusic;
+        audioSource.loop = false;
         audioSource.Play();
     }
 
