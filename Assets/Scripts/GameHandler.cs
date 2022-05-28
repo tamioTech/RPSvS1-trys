@@ -46,9 +46,9 @@ public class GameHandler : MonoBehaviour
         battling = false;
         gameOn = true;
         score = gameStartScore;
-        bombGao.SetActive(true);
         p1SR.color = new Color(1, 1, 1, 1);
         p2SR.color = new Color(1, 1, 1, 1);
+        bombGao.SetActive(true);
         p1Crown.SetActive(false);
         p2Crown.SetActive(false);
         expP1gao.SetActive(false);
@@ -84,16 +84,25 @@ public class GameHandler : MonoBehaviour
     public void BeginBattleButtonPressed()
     {
         if (!gameOn) return;
+
         Player2RandomCards();
+
         if (P1a == null || P2a == null) return;
         if (P1b == null || P2b == null) return;
+
         SlotABattle();
+
         SlotBBattle();
+        //Invoke("SlotBBattle", 2);
+
         UpdateScoreBoard();
+
         CheckScore();
+
         slotAFilled = false;
         slotBFilled = false;
-        Invoke("NextRound", 1);
+
+        Invoke("NextRound", 2);
     }
 
     private void Player2RandomCards()
@@ -104,14 +113,24 @@ public class GameHandler : MonoBehaviour
         P2a = rdmDraw[Mathf.RoundToInt(rdmNum1)];
         P2b = rdmDraw[Mathf.RoundToInt(rdmNum2)];
 
-        if (rdmNum1 == 0){p2a1.SetActive(true);}
+        ShowSlot1(rdmNum1);
+        ShowSlot2(rdmNum2);
+    }
+
+    private void ShowSlot1(float rdmNum1)
+    {
+        if (rdmNum1 == 0) { p2a1.SetActive(true); }
         if (rdmNum1 == 1) { p2a2.SetActive(true); }
         if (rdmNum1 == 2) { p2a3.SetActive(true); }
+    }
 
+    private void ShowSlot2(float rdmNum2)
+    {
         if (rdmNum2 == 0) { p2b1.SetActive(true); }
         if (rdmNum2 == 1) { p2b2.SetActive(true); }
         if (rdmNum2 == 2) { p2b3.SetActive(true); }
     }
+
 
     private void CheckScore()
     {
@@ -125,10 +144,12 @@ public class GameHandler : MonoBehaviour
             gameHandler.P1Explosion();
             p1SR.color = new Color(1, 1, 1, .3f);
             dj.PlayLoserMusic();
+
             gameOn = false;
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
             bombGao.SetActive(false);
+            resetButton.SetActive(true);
             return;
         }
         //win
@@ -141,6 +162,7 @@ public class GameHandler : MonoBehaviour
             gameHandler.P2Explosion();
             p2SR.color = new Color(1, 1, 1, .3f);
             dj.PlayVictoryMusic();
+
             gameOn = false;
             bomb.NoP1Fuse();
             bomb.NoP2Fuse();
